@@ -10,15 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Configure Kubernetes Access
+      run: |
+        mkdir -p ~/.kube
+        echo "${{ secrets.KUBECONFIG_DATA }}" > ~/.kube/config
 
-    - uses: azure/aks-set-context@v4
-      with:
-        resource-group: rg_Ali_Alsuleyman
-        cluster-name: aks-zerohero
-
-    - run: kubectl apply -f deployment.yaml
+    - name: Deploy Manifests to AKS
+      run: |
+        kubectl apply -f deployment.yaml
